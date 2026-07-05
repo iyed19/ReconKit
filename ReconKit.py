@@ -87,7 +87,7 @@ def specific_port_scan(target_ip):
         print("Invalid port")
         return
 
-    print ("\n Executing scan on port : ", port," ...")
+    print ("\n Executing scan on port : ", port)
     run_scan(["-p", port], target_ip)
     
 
@@ -150,7 +150,7 @@ def default_and_vuln_scripts_and_version_scan(target_ip):
     
 def specific_script(target_ip):
     
-    script = input("\n Enter your script name").strip()
+    script = input("\n Enter your script name : ").strip()
     
     print ("Executing ", script," scan ...")
     run_scan(["--script", script], target_ip)
@@ -159,9 +159,9 @@ def specific_script(target_ip):
 
 def spoof_resource_ip(target_ip):
     
-    spoof_ip = input("\n Enter your spoof IP ").strip()
+    spoof_ip = input("\n Enter your spoof IP : ").strip()
     
-    print ("Executing scan with IP = ", spoof_ip, " ...")
+    print ("Executing scan with IP = ", spoof_ip)
     run_scan(["-S", spoof_ip], target_ip)
     
     
