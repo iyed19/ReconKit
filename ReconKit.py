@@ -113,8 +113,41 @@ def service_version_scan(target_ip):
     
     
 
-def default_scripts_scan(target_ip):
+def scripts_scan(target_ip):
     
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Run default scripts ")
+        print ("\n 2. Run default scripts + service version ")
+        print ("\n 3. Run vulnerability scripts ")
+        print ("\n 4. Run default + vulnerability scripts ")
+        print ("\n 5. Run default + vulnerability scripts + service version")
+        print ("\n 6. Run a specific script ")
+        print ("\n 0. Back to Main Menu ")
+        
+        script_choice = input("\n Your choice (1-7) : ")
+        
+        if script_choice == "1" :
+            default_scripts_scan(target_ip)
+        elif script_choice == "2" :
+            default_scripts_and_service_version_scan(target_ip)
+        elif script_choice == "3" :
+            vuln_scan(target_ip)
+        elif script_choice == "4" :
+            default_and_vuln_scripts_scan(target_ip)
+        elif script_choice == "5" :
+            default_and_vuln_scripts_and_version_scan(target_ip)
+        elif script_choice == "6" :
+            specific_script(target_ip)
+        elif script_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+        
+        
+        
+def default_scripts_scan(target_ip):
+
     print ("\n Executing default scripts scan ...")
     run_scan(["-sC"], target_ip)
 
@@ -191,17 +224,12 @@ def main():
         print ("\n 4. Scan UDP ports ")
         print ("\n 5. OS detection ")
         print ("\n 6. Scan service version ")
-        print ("\n 7. Run default scripts ")
-        print ("\n 8. Run default scripts + service version ")
-        print ("\n 9. Run vulnerability scripts ")
-        print ("\n 10. Run default + vulnerability scripts ")
-        print ("\n 11. Run default + vulnerability scripts + service version")
-        print ("\n 12. Run a specific script ")
-        print ("\n 13. Spoof resource IP ")
-        print ("\n 14. Stealth scan (TCP SYN) ")
-        print ("\n 15. Change the target IP")
-        print ("\n 16. Quit ")
-        choice = input("\n Your choice (1-16) : ")
+        print ("\n 7. Run scripts ")
+        print ("\n 8. Spoof resource IP ")
+        print ("\n 9. Stealth scan (TCP SYN) ")
+        print ("\n 10. Change the target IP")
+        print ("\n 11. Quit ")
+        choice = input("\n Your choice (1-11) : ")
         
         if choice == "1" :
             default_scan(target_ip)
@@ -216,24 +244,14 @@ def main():
         elif choice == "6" :
             service_version_scan(target_ip)
         elif choice == "7" :
-            default_scripts_scan(target_ip)
+            scripts_scan(target_ip)
         elif choice == "8" :
-            default_scripts_and_service_version_scan(target_ip)
-        elif choice == "9" :
-            vuln_scan(target_ip)
-        elif choice == "10" :
-            default_and_vuln_scripts_scan(target_ip)
-        elif choice == "11" :
-            default_and_vuln_scripts_and_version_scan(target_ip)
-        elif choice == "12" :
-            specific_script(target_ip)
-        elif choice == "13" :
             spoof_resource_ip(target_ip)
-        elif choice == "14" :
+        elif choice == "9" :
             stealth_scan(target_ip)
-        elif choice == "15" :
+        elif choice == "10" :
             target_ip = input("Enter new target IP: ").strip()
-        elif choice == "16":
+        elif choice == "11":
             print ("\n GoodBye! ")
             break
         else :
