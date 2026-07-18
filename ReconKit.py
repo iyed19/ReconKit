@@ -266,7 +266,7 @@ def run_web_scan(target_ip, wordlist):
     ]
 
     print("\n" + "="*153)
-    print("Running:", " ".join(command))
+    print("     Running:", " ".join(command))
     print("="*153)
 
     result = subprocess.run(command,capture_output=True,text=True)
