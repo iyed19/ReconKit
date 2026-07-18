@@ -125,7 +125,7 @@ def scripts_scan(target_ip):
         print ("\n 6. Run a specific script ")
         print ("\n 0. Back to Main Menu ")
         
-        script_choice = input("\n Your choice (1-7) : ")
+        script_choice = input("\n Your choice (0-7) : ")
         
         if script_choice == "1" :
             default_scripts_scan(target_ip)
@@ -224,7 +224,7 @@ def web_scan(target_ip):
         print ("\n 4. Run very deep scan (takes so much time!) ")
         print ("\n 0. Back to Main Menu ")
         
-        scan_choice = input("\n Your choice (1-4) : ")
+        scan_choice = input("\n Your choice (0-4) : ")
         
         if scan_choice == "1":
             run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/common.txt")
@@ -244,14 +244,14 @@ def web_scan(target_ip):
 def run_web_scan(target_ip, wordlist):
 
     while True:
-        protocol = input("Protocol (http/https): ").strip()
+        protocol = input("\n Protocol (http/https): ").strip()
         
         if protocol == "http" :
             url = f"http://{target_ip}"
-            return url   
+            break   
         elif protocol == "https":
             url = f"https://{target_ip}"
-            return url
+            break
         else:
             print ("\n Invalid answer!")
             
