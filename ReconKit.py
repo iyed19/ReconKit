@@ -203,6 +203,78 @@ def stealth_scan(target_ip):
     
     print ("\n Executing stealth scan ...")
     run_scan(["-sS"], target_ip)
+
+
+
+def web_scan(target_ip):
+    
+    SECLISTS = "/usr/share/seclists"
+    if not os.path.exists(SECLISTS):
+        print("\n")
+        print("=" * 32)
+        print("   SecLists is not installed.")
+        print("=" * 32)
+        return
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Run quick scan ")
+        print ("\n 2. Run balanced scan ")
+        print ("\n 3. Run deep scan ")
+        print ("\n 4. Run very deep scan (takes so much time!) ")
+        print ("\n 0. Back to Main Menu ")
+        
+        scan_choice = input("\n Your choice (1-4) : ")
+        
+        if scan_choice == "1":
+            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/common.txt")
+        elif scan_choice == "2":
+            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-small.txt")
+        elif scan_choice == "3":
+            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt")
+        elif scan_choice == "4":
+            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-big.txt")
+        elif scan_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+    
+    
+    
+def run_web_scan(target_ip, wordlist):
+
+    while True:
+        protocol = input("Protocol (http/https): ").strip()
+        
+        if protocol == "http" :
+            url = f"http://{target_ip}"
+            return url   
+        elif protocol == "https":
+            url = f"https://{target_ip}"
+            return url
+        else:
+            print ("\n Invalid answer!")
+            
+
+    command = [
+        "gobuster",
+        "dir",
+        "-u", url,
+        "-w", wordlist,
+        "-x", "html,js,php,txt,zip,aspx",
+        "-t", "30"
+    ]
+
+    print("\n" + "="*153)
+    print("Running:", " ".join(command))
+    print("="*153)
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
     
     
 
@@ -227,9 +299,10 @@ def main():
         print ("\n 7. Run scripts ")
         print ("\n 8. Spoof resource IP ")
         print ("\n 9. Stealth scan (TCP SYN) ")
-        print ("\n 10. Change the target IP")
-        print ("\n 11. Quit ")
-        choice = input("\n Your choice (1-11) : ")
+        print ("\n 10. Web page and directory brute force ")
+        print ("\n 11. Change the target IP")
+        print ("\n 12. Quit ")
+        choice = input("\n Your choice (1-12) : ")
         
         if choice == "1" :
             default_scan(target_ip)
@@ -250,8 +323,10 @@ def main():
         elif choice == "9" :
             stealth_scan(target_ip)
         elif choice == "10" :
+            web_scan(target_ip)
+        elif choice == "11" :
             target_ip = input("Enter new target IP: ").strip()
-        elif choice == "11":
+        elif choice == "12":
             print ("\n GoodBye! ")
             break
         else :
