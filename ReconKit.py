@@ -1,5 +1,6 @@
 import os
 import subprocess
+import ipaddress
 
 
     
@@ -12,6 +13,27 @@ def run_scan(options, target_ip):
     output_args = save_result()
 
     command = ["nmap"] + options + output_args + [target_ip]
+
+    result = subprocess.run(command, capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print ("Error:")
+        print (result.stderr)
+    
+    print (result.stdout)
+    
+    
+    
+def run_network_scan(target_ip, subnet):
+        
+    output_args = save_result()
+
+    network = ipaddress.ip_network(f"{target_ip}/{subnet}", strict=False)
+    command = ["nmap", "-sn", str(network)]
+    
+    print ("\n" + "=" * 54)
+    print ("          Running:", " ".join(command))
+    print ("=" * 54)
 
     result = subprocess.run(command, capture_output=True, text=True)
 
@@ -125,7 +147,7 @@ def scripts_scan(target_ip):
         print ("\n 6. Run a specific script ")
         print ("\n 0. Back to Main Menu ")
         
-        script_choice = input("\n Your choice (0-7) : ")
+        script_choice = input("\n Your choice (0-6) : ")
         
         if script_choice == "1" :
             default_scripts_scan(target_ip)
@@ -255,7 +277,6 @@ def run_web_scan(target_ip, wordlist):
         else:
             print ("\n Invalid answer!")
             
-
     command = [
         "gobuster",
         "dir",
@@ -275,7 +296,48 @@ def run_web_scan(target_ip, wordlist):
 
     if result.stderr:
         print(result.stderr)
+        
+        
+        
+def network_scan(target_ip):
     
+    while True:
+        print ("\n What do you want to scan ? ")
+        print ("\n 1. Scan default /24 network ")
+        print ("\n 2. Scan /25 network ")
+        print ("\n 3. Scan /26 network ")
+        print ("\n 4. Scan /27 network ")
+        print ("\n 5. Enter custom subnet ")
+        print ("\n 0. Back to Main Menu ")
+        
+        scan_choice = input("\n Your choice (0-5) : ")
+        
+        if scan_choice == "1" :
+            run_network_scan(target_ip, "24")
+        elif scan_choice == "2" :
+            run_network_scan(target_ip, "25")
+        elif scan_choice == "3" :
+            run_network_scan(target_ip, "26")
+        elif scan_choice == "4" :
+            run_network_scan(target_ip, "27")
+        elif scan_choice == "5" :
+            
+            custom_subnet = input ("\n Enter custom subnet 0-32 ").strip()
+            
+            if not custom_subnet.isdigit():
+                print("\n Invalid subnet")  
+            else :
+                subnet_val = int(custom_subnet)
+                if subnet_val < 0 or subnet_val > 32:
+                    print("\n Subnet must be between 0 and 32")
+                else :
+                    run_network_scan(target_ip, str(subnet_val))
+            
+        elif scan_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+            
     
 
 
@@ -293,16 +355,17 @@ def main():
         print ("\n 1. Default scan (Top 1000 ports) ")
         print ("\n 2. Scan all ports (1 to 65535) ")
         print ("\n 3. Scan a specific port ")
-        print ("\n 4. Scan UDP ports ")
-        print ("\n 5. OS detection ")
-        print ("\n 6. Scan service version ")
-        print ("\n 7. Run scripts ")
-        print ("\n 8. Spoof resource IP ")
-        print ("\n 9. Stealth scan (TCP SYN) ")
-        print ("\n 10. Web page and directory brute force ")
-        print ("\n 11. Change the target IP")
-        print ("\n 12. Quit ")
-        choice = input("\n Your choice (1-12) : ")
+        print ("\n 4. Scan a network ")
+        print ("\n 5. Scan UDP ports ")
+        print ("\n 6. OS detection ")
+        print ("\n 7. Scan service version ")
+        print ("\n 8. Run scripts ")
+        print ("\n 9. Spoof resource IP ")
+        print ("\n 10. Stealth scan (TCP SYN) ")
+        print ("\n 11. Web page and directory brute force ")
+        print ("\n 12. Change the target IP")
+        print ("\n 13. Quit ")
+        choice = input("\n Your choice (1-13) : ")
         
         if choice == "1" :
             default_scan(target_ip)
@@ -311,22 +374,24 @@ def main():
         elif choice == "3" :
             specific_port_scan(target_ip)
         elif choice == "4" :
-            udp_scan(target_ip)
+            network_scan(target_ip)
         elif choice == "5" :
-            os_scan(target_ip)
+            udp_scan(target_ip)
         elif choice == "6" :
-            service_version_scan(target_ip)
+            os_scan(target_ip)
         elif choice == "7" :
-            scripts_scan(target_ip)
+            service_version_scan(target_ip)
         elif choice == "8" :
-            spoof_resource_ip(target_ip)
+            scripts_scan(target_ip)
         elif choice == "9" :
-            stealth_scan(target_ip)
+            spoof_resource_ip(target_ip)
         elif choice == "10" :
-            web_scan(target_ip)
+            stealth_scan(target_ip)
         elif choice == "11" :
+            web_scan(target_ip)
+        elif choice == "12" :
             target_ip = input("Enter new target IP: ").strip()
-        elif choice == "12":
+        elif choice == "13":
             print ("\n GoodBye! ")
             break
         else :
