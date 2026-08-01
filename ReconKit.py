@@ -266,7 +266,7 @@ def web_scan(target_ip):
 def run_web_scan(target_ip, wordlist):
 
     while True:
-        protocol = input("\n Protocol (http/https): ").strip()
+        protocol = input("\n Protocol (http/https) : ").strip()
         
         if protocol == "http" :
             url = f"http://{target_ip}"
@@ -322,7 +322,7 @@ def network_scan(target_ip):
             run_network_scan(target_ip, "27")
         elif scan_choice == "5" :
             
-            custom_subnet = input ("\n Enter custom subnet 0-32 ").strip()
+            custom_subnet = input ("\n Enter custom subnet 0-32 : ").strip()
             
             if not custom_subnet.isdigit():
                 print("\n Invalid subnet")  
