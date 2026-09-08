@@ -1,9 +1,22 @@
 import os
 import subprocess
 import ipaddress
+import shutil
 
 
-    
+
+
+
+def check_tool(tool):
+    if shutil.which(tool):
+        #print(f"\n [+] {tool} is installed.")
+        return True
+    else:
+        print(f"\n [-] {tool} is not installed.")
+        return False
+
+
+
 def run_scan(options, target_ip):
     
     print ("\n" + "=" * 60)
@@ -86,18 +99,161 @@ def save_result():
             print ("\n Invalid answer!")
     
     
+def nmap_scan(target_ip):
     
-def default_scan(target_ip):
-    
-    print ("\n Executing default scan ...")
-    run_scan([], target_ip)
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Scan a network ")
+        print ("\n 2. Run default scripts + service version ")
+        print ("\n 3. Run default scripts + service version + vulnerability scripts ")
+        print ("\n 4. Run a specific script ")
+        print ("\n 5. Scan all ports (1 to 65535) ")
+        print ("\n 6. Scan a specific port ")
+        print ("\n 7. Scan UDP ports ")
+        print ("\n 8. OS detection ")
+        print ("\n 9. Spoof resource IP ")
+        print ("\n 10. Stealth scan (TCP SYN) ")
+        print ("\n 0. Back to Main Menu ")
+        
+        nmap_choice = input("\n Your choice (0-10) : ")
+        
+        if nmap_choice == "1" :
+            network_scan(target_ip)
+        elif nmap_choice == "2" :
+            default_scripts_and_service_version_scan(target_ip)
+        elif nmap_choice == "3" :
+            default_and_vuln_scripts_and_version_scan(target_ip)
+        elif nmap_choice == "4" :
+            specific_script(target_ip)
+        elif nmap_choice == "5" :
+            all_ports_scan(target_ip)
+        elif nmap_choice == "6" :
+            specific_port_scan(target_ip)
+        elif nmap_choice == "7" :
+            udp_scan(target_ip)
+        elif nmap_choice == "8" :
+            os_scan(target_ip)
+        elif nmap_choice == "9" :
+            spoof_resource_ip(target_ip)
+        elif nmap_choice == "10" :
+            stealth_scan(target_ip)
+        elif nmap_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
     
 
 
+def web_scan(target_ip):
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Web page and directory brute force ")
+        print ("\n 2. HTTP/HTTPS Headers ")
+        print ("\n 0. Back to Main Menu ")
+        
+        web_choice = input("\n Your choice (0-2) : ")
+        
+        if web_choice == "1" :
+            if (check_tool("gobuster") == True) :
+                web_pages_bruteforce(target_ip)
+            else:
+                print("\n Please install [ gobuster ] to proceed in this function")
+                break
+        elif web_choice == "2" :
+            http_headers_scan(target_ip)
+        elif web_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+            
+            
+ 
+def dns_scan(target_ip):
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Subdomain passive discovery - Subfinder ")
+        print ("\n 2. Subdomain brute force - Gobuster ")
+        print ("\n 0. Back to Main Menu ")
+        
+        dns_choice = input("\n Your choice (0-2) : ")
+        
+        if dns_choice == "1" :
+            web_pages_bruteforce(target_ip)
+        elif dns_choice == "2" :
+            if (check_tool("curl") == True) :
+                http_headers_scan(target_ip)
+            else:
+                print("\n Please install [ curl ] to proceed in this function")
+                break
+        elif dns_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+            
+            
+            
+def common_services_scan(target_ip):
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. SMB ")
+        print ("\n 2. RDP ")
+        print ("\n 3. SQL Databases ")
+        print ("\n 4. SMTP/IMAP/POP3 ")
+        print ("\n 5. FTP ")
+        print ("\n 0. Back to Main Menu ")
+        
+        srvc_choice = input("\n Your choice (0-5) : ")
+        
+        if srvc_choice == "1" :
+            break
+        elif srvc_choice == "2" :
+            break
+        elif srvc_choice == "3" :
+            break
+        elif srvc_choice == "4" :
+            break
+        elif srvc_choice == "5" :
+            break
+        elif srvc_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+            
+            
+
+def file_scan():
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Read Metadata of a local file ")
+        #print ("\n 2. . ")
+        #print ("\n 3. . ")
+        print ("\n 0. Back to Main Menu ")
+        
+        file_scan_choice = input("\n Your choice (0-3) : ")
+        
+        if file_scan_choice == "1" :
+            if (check_tool("exiftool") == True) :
+                exiftool_metadata_extract()
+            else:
+                print("\n Please install [ exiftool ] to proceed in this function")
+                break
+        #elif file_scan_choice == "2" :
+            #break
+        #elif file_scan_choice == "3" :
+            #break
+        #elif file_scan_choice == "0" :
+            #return
+        else :
+            print ("\n Invalid choice!")
+            
 def all_ports_scan(target_ip):
     
     print ("\n Executing all ports scan ...")
-    run_scan(["-p-"], target_ip)
+    run_scan(["-p-", "-Pn"], target_ip)
     
     
   
@@ -110,96 +266,35 @@ def specific_port_scan(target_ip):
         return
 
     print ("\n Executing scan on port : ", port)
-    run_scan(["-p", port], target_ip)
+    run_scan(["-p", port, "-Pn"], target_ip)
     
 
 
 def udp_scan(target_ip):
     
     print ("\n Executing UDP scan ...")
-    run_scan(["-sU"], target_ip)
+    run_scan(["-sU", "-Pn"], target_ip)
     
     
 
 def os_scan(target_ip):
     
     print ("\n Executing OS detection scan ...")
-    run_scan(["-O"], target_ip)
-    
-    
-    
-def service_version_scan(target_ip):
-    
-    print ("\n Executing service version scan ...")
-    run_scan(["-sV"], target_ip)
-    
-    
-
-def scripts_scan(target_ip):
-    
-    while True:
-        print ("\n What do you want to do ? ")
-        print ("\n 1. Run default scripts ")
-        print ("\n 2. Run default scripts + service version ")
-        print ("\n 3. Run vulnerability scripts ")
-        print ("\n 4. Run default + vulnerability scripts ")
-        print ("\n 5. Run default + vulnerability scripts + service version")
-        print ("\n 6. Run a specific script ")
-        print ("\n 0. Back to Main Menu ")
-        
-        script_choice = input("\n Your choice (0-6) : ")
-        
-        if script_choice == "1" :
-            default_scripts_scan(target_ip)
-        elif script_choice == "2" :
-            default_scripts_and_service_version_scan(target_ip)
-        elif script_choice == "3" :
-            vuln_scan(target_ip)
-        elif script_choice == "4" :
-            default_and_vuln_scripts_scan(target_ip)
-        elif script_choice == "5" :
-            default_and_vuln_scripts_and_version_scan(target_ip)
-        elif script_choice == "6" :
-            specific_script(target_ip)
-        elif script_choice == "0" :
-            return
-        else :
-            print ("\n Invalid choice!")
-        
-        
-        
-def default_scripts_scan(target_ip):
-
-    print ("\n Executing default scripts scan ...")
-    run_scan(["-sC"], target_ip)
+    run_scan(["-O", "-Pn"], target_ip)
 
 
 
 def default_scripts_and_service_version_scan(target_ip):
     
-    print ("\n Executing default scripts and service version scan ...")
-    run_scan(["-sV", "-sC"], target_ip)
-    
-    
-    
-def vuln_scan(target_ip):
-    
-    print ("\n Executing vulnerability scripts scan ...")
-    run_scan(["--script", "vuln"], target_ip)
-    
-    
-
-def default_and_vuln_scripts_scan(target_ip):
-    
-    print ("\n Executing default and vulnerability scripts scan ...")
-    run_scan(["-sC", "--script", "vuln"], target_ip)
+    print ("\n Executing default nmap scripts and service version scan ...")
+    run_scan(["-sV", "-sC", "-Pn"], target_ip)
     
 
 
 def default_and_vuln_scripts_and_version_scan(target_ip):
     
     print ("\n Executing default and vulnerability scripts and version scan ...")
-    run_scan(["-sV", "-sC", "--script", "vuln"], target_ip)
+    run_scan(["-sV", "-sC", "--script", "vuln", "-Pn"], target_ip)
     
     
     
@@ -208,7 +303,7 @@ def specific_script(target_ip):
     script = input("\n Enter your script name : ").strip()
     
     print ("Executing ", script," scan ...")
-    run_scan(["--script", script], target_ip)
+    run_scan(["--script", script, "-Pn"], target_ip)
     
 
 
@@ -217,7 +312,7 @@ def spoof_resource_ip(target_ip):
     spoof_ip = input("\n Enter your spoof IP : ").strip()
     
     print ("Executing scan with IP = ", spoof_ip)
-    run_scan(["-S", spoof_ip], target_ip)
+    run_scan(["-S", spoof_ip, "-sV", "-sC", "-Pn"], target_ip)
     
     
     
@@ -228,7 +323,7 @@ def stealth_scan(target_ip):
 
 
 
-def web_scan(target_ip):
+def web_pages_bruteforce(target_ip):
     
     SECLISTS = "/usr/share/seclists"
     if not os.path.exists(SECLISTS):
@@ -240,22 +335,22 @@ def web_scan(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Run quick scan ")
-        print ("\n 2. Run balanced scan ")
-        print ("\n 3. Run deep scan ")
-        print ("\n 4. Run very deep scan (takes so much time!) ")
+        print ("\n 1. Run quick pages scan ")
+        print ("\n 2. Run balanced pages scan ")
+        print ("\n 3. Run deep pages scan ")
+        print ("\n 4. Run very deep pages scan (takes so much time!) ")
         print ("\n 0. Back to Main Menu ")
         
         scan_choice = input("\n Your choice (0-4) : ")
         
         if scan_choice == "1":
-            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/common.txt")
+            web_pg_bf(target_ip,"/usr/share/seclists/Discovery/Web-Content/common.txt")
         elif scan_choice == "2":
-            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-small.txt")
+            web_pg_bf(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-small.txt")
         elif scan_choice == "3":
-            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt")
+            web_pg_bf(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-medium.txt")
         elif scan_choice == "4":
-            run_web_scan(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-big.txt")
+            web_pg_bf(target_ip,"/usr/share/seclists/Discovery/Web-Content/DirBuster-2007_directory-list-2.3-big.txt")
         elif scan_choice == "0" :
             return
         else :
@@ -263,7 +358,7 @@ def web_scan(target_ip):
     
     
     
-def run_web_scan(target_ip, wordlist):
+def web_pg_bf(target_ip, wordlist):
 
     while True:
         protocol = input("\n Protocol (http/https) : ").strip()
@@ -310,17 +405,17 @@ def network_scan(target_ip):
         print ("\n 5. Enter custom subnet ")
         print ("\n 0. Back to Main Menu ")
         
-        scan_choice = input("\n Your choice (0-5) : ")
+        net_scan_choice = input("\n Your choice (0-5) : ")
         
-        if scan_choice == "1" :
+        if net_scan_choice == "1" :
             run_network_scan(target_ip, "24")
-        elif scan_choice == "2" :
+        elif net_scan_choice == "2" :
             run_network_scan(target_ip, "25")
-        elif scan_choice == "3" :
+        elif net_scan_choice == "3" :
             run_network_scan(target_ip, "26")
-        elif scan_choice == "4" :
+        elif net_scan_choice == "4" :
             run_network_scan(target_ip, "27")
-        elif scan_choice == "5" :
+        elif net_scan_choice == "5" :
             
             custom_subnet = input ("\n Enter custom subnet 0-32 : ").strip()
             
@@ -333,65 +428,100 @@ def network_scan(target_ip):
                 else :
                     run_network_scan(target_ip, str(subnet_val))
             
-        elif scan_choice == "0" :
+        elif net_scan_choice == "0" :
             return
         else :
             print ("\n Invalid choice!")
+            
+            
+            
+def http_headers_scan(target_ip):
+    
+    while True:
+        
+        if target_ip.startswith("http://") or target_ip.startswith("https://") :
+            url = target_ip
+            break
+        else:
+            protocol = input("\n Protocol (http/https) : ").strip()
+            
+            if protocol == "http" :
+                url = f"http://{target_ip}"
+                break   
+            elif protocol == "https":
+                url = f"https://{target_ip}"
+                break
+            else:
+                print ("\n Invalid answer!")
+            
+    command = ["curl", "-I", url]
+
+    print("\n" + "="*53)
+    print("  Running:", " ".join(command))
+    print("="*53)
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+    
+    
+    
+def exiftool_metadata_extract():
+    
+    while True:
+        
+        file_location = input("\n Paste here the file full location (exp : /home/user01/img.jpg) : ")
+        
+    command = ["exiftool", file_location]
+
+    print("\n" + "="*35)
+    print("  Running:", " ".join(command))
+    print("="*35)
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+    
             
     
 
 
 def main():
     
-    print("=" * 28)
-    print (" Welcome to Nmap Automator.")
-    print("=" * 28)
+    print("=" * 29)
+    print (" Welcome to Recon Automator.")
+    print("=" * 29)
     
-    target_ip = input("Enter target IP : ").strip()
+    target_ip = input("Enter target IP/Name/URL : ").strip()
     
     while True :
         print ("\n Current target : ", target_ip)
         print ("\n What do you want to do ? ")
-        print ("\n 1. Default scan (Top 1000 ports) ")
-        print ("\n 2. Scan all ports (1 to 65535) ")
-        print ("\n 3. Scan a specific port ")
-        print ("\n 4. Scan a network ")
-        print ("\n 5. Scan UDP ports ")
-        print ("\n 6. OS detection ")
-        print ("\n 7. Scan service version ")
-        print ("\n 8. Run scripts ")
-        print ("\n 9. Spoof resource IP ")
-        print ("\n 10. Stealth scan (TCP SYN) ")
-        print ("\n 11. Web page and directory brute force ")
-        print ("\n 12. Change the target IP")
-        print ("\n 13. Quit ")
-        choice = input("\n Your choice (1-13) : ")
+        print ("\n 1. Target & Host Discovery ")
+        print ("\n 2. Web Reconnaissance ")
+        print ("\n 3. DNS Reconnaissance ")
+        print ("\n 4. Enumerating common services ")
+        print ("\n 5. People OSINT ")
+        print ("\n 6. File & Metadata Reconnaissance ")
+        print ("\n 7. Change the target IP/Name/URL")
+        print ("\n 8. Quit ")
+        choice = input("\n Your choice (1-8) : ")
         
         if choice == "1" :
-            default_scan(target_ip)
+            nmap_scan(target_ip)
         elif choice == "2" :
-            all_ports_scan(target_ip)
-        elif choice == "3" :
-            specific_port_scan(target_ip)
-        elif choice == "4" :
-            network_scan(target_ip)
-        elif choice == "5" :
-            udp_scan(target_ip)
-        elif choice == "6" :
-            os_scan(target_ip)
-        elif choice == "7" :
-            service_version_scan(target_ip)
-        elif choice == "8" :
-            scripts_scan(target_ip)
-        elif choice == "9" :
-            spoof_resource_ip(target_ip)
-        elif choice == "10" :
-            stealth_scan(target_ip)
-        elif choice == "11" :
             web_scan(target_ip)
-        elif choice == "12" :
-            target_ip = input("Enter new target IP: ").strip()
-        elif choice == "13":
+        elif choice == "3" :
+            dns_scan(target_ip)
+        elif choice == "4" :
+            common_services_scan(target_ip)
+        elif choice == "5" :
+            break
+        elif choice == "6" :
+            file_scan()
+        elif choice == "7" :
+            target_ip = input("Enter new target IP/Name/URL: ").strip()
+        elif choice == "8":
             print ("\n GoodBye! ")
             break
         else :
