@@ -468,9 +468,7 @@ def http_headers_scan(target_ip):
     
 def exiftool_metadata_extract():
     
-    while True:
-        
-        file_location = input("\n Paste here the file full location (exp : /home/user01/img.jpg) : ")
+    file_location = input("\n Paste here the file full location (exp : /home/user01/img.jpg) : ")
         
     command = ["exiftool", file_location]
 
