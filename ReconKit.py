@@ -233,7 +233,7 @@ def file_scan():
         #print ("\n 3. . ")
         print ("\n 0. Back to Main Menu ")
         
-        file_scan_choice = input("\n Your choice (0-3) : ")
+        file_scan_choice = input("\n Your choice (0-1) : ")
         
         if file_scan_choice == "1" :
             if (check_tool("exiftool") == True) :
@@ -245,8 +245,8 @@ def file_scan():
             #break
         #elif file_scan_choice == "3" :
             #break
-        #elif file_scan_choice == "0" :
-            #return
+        elif file_scan_choice == "0" :
+            return
         else :
             print ("\n Invalid choice!")
             
@@ -472,9 +472,9 @@ def exiftool_metadata_extract():
         
     command = ["exiftool", file_location]
 
-    print("\n" + "="*35)
+    print("\n" + "="*80)
     print("  Running:", " ".join(command))
-    print("="*35)
+    print("="*80)
 
     result = subprocess.run(command,capture_output=True,text=True)
 
