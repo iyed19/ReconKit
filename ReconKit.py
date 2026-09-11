@@ -456,8 +456,11 @@ def http_headers_scan(target_ip):
             
     command = ["curl", "-I", url]
 
+    BLUE = "\033[94m"
+    RESET = "\033[0m"
+    
     print("\n" + "="*53)
-    print("  Running:", " ".join(command))
+    print(f"  Running: {BLUE}curl{RESET} {' '.join(command[1:])}")
     print("="*53)
 
     #result = subprocess.run(command,capture_output=True,text=True)
