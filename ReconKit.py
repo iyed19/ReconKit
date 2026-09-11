@@ -5,35 +5,54 @@ import shutil
 
 
 
+# ===================
+#   Terminal Colors
+# ===================
+
+RED     = "\033[31m"
+BRIGHT_RED  = "\033[91m"
+GREEN   = "\033[32m"
+BRIGHT_GREEN = "\033[92m"
+YELLOW  = "\033[33m"
+BRIGHT_YELLOW = "\033[93m"
+BLUE    = "\033[34m"
+BRIGHT_BLUE  = "\033[94m"
+MAGENTA = "\033[35m"
+CYAN    = "\033[36m"
+WHITE   = "\033[37m"
+
+RESET   = "\033[0m"
+
+
 
 
 def check_tool(tool):
     if shutil.which(tool):
-        #print(f"\n [+] {tool} is installed.")
+        #print(f"\n [{BRIGHT_GREEN}+{RESET}] {tool} {BRIGHT_GREEN}is installed. {RESET}")
         return True
     else:
-        print(f"\n [-] {tool} is not installed.")
+        print(f"\n [{BRIGHT_RED}-{RESET}] {tool} {RED}is not installed. {RESET}")
         return False
 
 
 
 def run_scan(options, target_ip):
     
-    print ("\n" + "=" * 60)
-    print ("          Running:", " ".join(["nmap"] + options + [target_ip]))
-    print ("=" * 60)
+    colored_nmap = f"{BLUE}nmap{RESET}"
+    colored_options = [f"{GREEN}{opt}{RESET}" for opt in options]
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
+
+    print("\n" + "=" * 60)
+    print("          Running:", " ".join(full_cmd_display))
+    print("=" * 60)
     
     output_args = save_result()
 
     command = ["nmap"] + options + output_args + [target_ip]
 
-    result = subprocess.run(command, capture_output=True, text=True)
-
-    if result.returncode != 0:
-        print ("Error:")
-        print (result.stderr)
-    
-    print (result.stdout)
+    subprocess.run(command)
     
     
     
@@ -455,17 +474,11 @@ def http_headers_scan(target_ip):
                 print ("\n Invalid answer!")
             
     command = ["curl", "-I", url]
-
-    BLUE = "\033[94m"
-    RESET = "\033[0m"
     
     print("\n" + "="*53)
-    print(f"  Running: {BLUE}curl{RESET} {' '.join(command[1:])}")
+    print(f"  Running: {BLUE}curl {GREEN}-I {RESET}{' '.join(command[2:])}")
     print("="*53)
 
-    #result = subprocess.run(command,capture_output=True,text=True)
-
-    #print(result.stdout)
     subprocess.run(command)
     
     
