@@ -460,9 +460,10 @@ def http_headers_scan(target_ip):
     print("  Running:", " ".join(command))
     print("="*53)
 
-    result = subprocess.run(command,capture_output=True,text=True)
+    #result = subprocess.run(command,capture_output=True,text=True)
 
-    print(result.stdout)
+    #print(result.stdout)
+    subprocess.run(command)
     
     
     
@@ -472,9 +473,9 @@ def exiftool_metadata_extract():
         
     command = ["exiftool", file_location]
 
-    print("\n" + "="*80)
+    print("\n" + "="*75)
     print("  Running:", " ".join(command))
-    print("="*80)
+    print("="*75)
 
     result = subprocess.run(command,capture_output=True,text=True)
 
