@@ -38,7 +38,7 @@ def check_tool(tool):
 
 def run_scan(options, target_ip):
     
-    colored_nmap = f"{BLUE}nmap{RESET}"
+    colored_nmap = f"{CYAN}nmap{RESET}"
     colored_options = [f"{GREEN}{opt}{RESET}" for opt in options]
     colored_ip = f"{RESET}{target_ip}"
 
@@ -63,7 +63,7 @@ def run_network_scan(target_ip, subnet):
     network = ipaddress.ip_network(f"{target_ip}/{subnet}", strict=False)
     command = ["nmap", "-sn", str(network)]
     
-    colored_nmap = f"{BLUE}nmap{RESET}"
+    colored_nmap = f"{CYAN}nmap{RESET}"
     colored_options = [f"{GREEN}-sn{RESET}"]
     colored_ip = f"{RESET}{target_ip}"
 
@@ -476,7 +476,7 @@ def http_headers_scan(target_ip):
     command = ["curl", "-I", url]
     
     print("\n" + "="*53)
-    print(f"  Running: {BLUE}curl {GREEN}-I {RESET}{' '.join(command[2:])}")
+    print(f"  Running: {CYAN}curl {GREEN}-I {RESET}{' '.join(command[2:])}")
     print("="*53)
 
     subprocess.run(command)
@@ -503,9 +503,9 @@ def exiftool_metadata_extract():
 
 def main():
     
-    print("=" * 29)
-    print (" Welcome to Recon Automator.")
-    print("=" * 29)
+    print("=" * 33)
+    print (f"   {BRIGHT_GREEN}Welcome to Recon Automator.{RESET}")
+    print("=" * 33)
     
     target_ip = input("Enter target IP/Name/URL : ").strip()
     
