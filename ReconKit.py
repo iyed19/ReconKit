@@ -63,17 +63,17 @@ def run_network_scan(target_ip, subnet):
     network = ipaddress.ip_network(f"{target_ip}/{subnet}", strict=False)
     command = ["nmap", "-sn", str(network)]
     
-    print ("\n" + "=" * 54)
-    print ("          Running:", " ".join(command))
-    print ("=" * 54)
+    colored_nmap = f"{BLUE}nmap{RESET}"
+    colored_options = [f"{GREEN}-sn{RESET}"]
+    colored_ip = f"{RESET}{target_ip}"
 
-    result = subprocess.run(command, capture_output=True, text=True)
+    full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
 
-    if result.returncode != 0:
-        print ("Error:")
-        print (result.stderr)
-    
-    print (result.stdout)
+    print("\n" + "=" * 60)
+    print("          Running:", " ".join(full_cmd_display))
+    print("=" * 60)
+
+    subprocess.run(command)
     
     
 
