@@ -199,12 +199,12 @@ def dns_scan(target_ip):
         dns_choice = input("\n Your choice (0-2) : ")
         
         if dns_choice == "1" :
-            web_pages_bruteforce(target_ip)
+            break
         elif dns_choice == "2" :
-            if (check_tool("curl") == True) :
-                http_headers_scan(target_ip)
+            if (check_tool("gobuster") == True) :
+                break
             else:
-                print("\n Please install [ curl ] to proceed in this function")
+                print("\n Please install [ gobuster ] to proceed in this function")
                 break
         elif dns_choice == "0" :
             return
@@ -503,9 +503,9 @@ def exiftool_metadata_extract():
 
 def main():
     
-    print("=" * 33)
-    print (f"   {BRIGHT_GREEN}Welcome to Recon Automator.{RESET}")
-    print("=" * 33)
+    print("=" * 37)
+    print (f"     {BRIGHT_GREEN}Welcome to Recon Automator.{RESET}")
+    print("=" * 37)
     
     target_ip = input("Enter target IP/Name/URL : ").strip()
     
