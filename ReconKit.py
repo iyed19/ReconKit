@@ -381,7 +381,7 @@ def web_pages_bruteforce(target_ip):
     
     
 
-def subdomain_bruteforce():
+def subdomain_bruteforce(target_ip):
     
     SECLISTS = "/usr/share/seclists"
     if not os.path.exists(SECLISTS):
@@ -416,7 +416,7 @@ def subdomain_bruteforce():
             
             
 
-def subdomain_passive():
+def subdomain_passive(target_ip):
     
     command = [
         "subfinder",
