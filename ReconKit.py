@@ -26,6 +26,21 @@ RESET   = "\033[0m"
 
 
 
+def show_banner():
+    # \033[36m sets the color to Cyan
+    # \033[0m resets the formatting back to default
+    banner = """\033[92m
+ ██████╗ ███████╗ ██████╗ ██████╗ ███╗   ██╗██╗  ██╗██╗████████╗
+ ██╔══██╗██╔════╝██╔════╝██╔═══██╗████╗  ██║██║ ██╔╝██║╚══██╔══╝
+ ██████╔╝█████╗  ██║     ██║   ██║██╔██╗ ██║█████╔╝ ██║   ██║   
+ ██╔══██╗██╔══╝  ██║     ██║   ██║██║╚██╗██║██╔═██╗ ██║   ██║   
+ ██║  ██║███████╗╚██████╗╚██████╔╝██║ ╚████║██║  ██╗██║   ██║   
+ ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝   ╚═╝   
+\033[0m"""
+    print(banner)
+    
+    
+    
 def check_tool(tool):
     if shutil.which(tool):
         #print(f"\n [{BRIGHT_GREEN}+{RESET}] {tool} {BRIGHT_GREEN}is installed. {RESET}")
@@ -94,10 +109,10 @@ def save_result():
             
             while True:
                 print ("\n Format : ")
-                print ("\n 1. Normal (.nmap) ")
-                print ("\n 2. XML (.xml) ")
-                print ("\n 3. Grepable (.gnmap) ")
-                print ("\n 4. All (-oA) ")
+                print ("\n [1] Normal (.nmap) ")
+                print ("\n [2] XML (.xml) ")
+                print ("\n [3] Grepable (.gnmap) ")
+                print ("\n [4] All (-oA) ")
                 
                 format_choice = input("\n Your choice (1-4) : ")
                 
@@ -122,17 +137,17 @@ def nmap_scan(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Scan a network ")
-        print ("\n 2. Run default scripts + service version ")
-        print ("\n 3. Run default scripts + service version + vulnerability scripts ")
-        print ("\n 4. Run a specific script ")
-        print ("\n 5. Scan all ports (1 to 65535) ")
-        print ("\n 6. Scan a specific port ")
-        print ("\n 7. Scan UDP ports ")
-        print ("\n 8. OS detection ")
-        print ("\n 9. Spoof resource IP ")
-        print ("\n 10. Stealth scan (TCP SYN) ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Scan a network ")
+        print ("\n [2] Run default scripts + service version ")
+        print ("\n [3] Run default scripts + service version + vulnerability scripts ")
+        print ("\n [4] Run a specific script ")
+        print ("\n [5] Scan all ports (1 to 65535) ")
+        print ("\n [6] Scan a specific port ")
+        print ("\n [7] Scan UDP ports ")
+        print ("\n [8] OS detection ")
+        print ("\n [9] Spoof resource IP ")
+        print ("\n [10] Stealth scan (TCP SYN) ")
+        print ("\n [0] Back to Main Menu ")
         
         nmap_choice = input("\n Your choice (0-10) : ")
         
@@ -167,9 +182,9 @@ def web_scan(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Web page and directory brute force ")
-        print ("\n 2. HTTP/HTTPS Headers ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Web page and directory brute force ")
+        print ("\n [2] HTTP/HTTPS Headers ")
+        print ("\n [0] Back to Main Menu ")
         
         web_choice = input("\n Your choice (0-2) : ")
         
@@ -192,9 +207,9 @@ def dns_scan(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Subdomain passive discovery - Subfinder ")
-        print ("\n 2. Subdomain brute force - Gobuster ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Subdomain passive discovery - Subfinder ")
+        print ("\n [2] Subdomain brute force - Gobuster ")
+        print ("\n [0] Back to Main Menu ")
         
         dns_choice = input("\n Your choice (0-2) : ")
         
@@ -358,11 +373,11 @@ def web_pages_bruteforce(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Run quick pages scan ")
-        print ("\n 2. Run balanced pages scan ")
-        print ("\n 3. Run deep pages scan ")
-        print ("\n 4. Run very deep pages scan (takes so much time!) ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Run quick pages scan ")
+        print ("\n [2] Run balanced pages scan ")
+        print ("\n [3] Run deep pages scan ")
+        print ("\n [4] Run very deep pages scan (takes so much time!) ")
+        print ("\n [0] Back to Main Menu ")
         
         scan_choice = input("\n Your choice (0-4) : ")
         
@@ -393,11 +408,11 @@ def subdomain_bruteforce(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n 1. Run quick pages scan ")
-        print ("\n 2. Run balanced pages scan ")
-        print ("\n 3. Run deep pages scan ")
-        print ("\n 4. Run very deep pages scan (takes so much time!) ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Run quick pages scan ")
+        print ("\n [2] Run balanced pages scan ")
+        print ("\n [3] Run deep pages scan ")
+        print ("\n [4] Run very deep pages scan (takes so much time!) ")
+        print ("\n [0] Back to Main Menu ")
         
         scan_choice = input("\n Your choice (0-4) : ")
         
@@ -423,9 +438,9 @@ def subdomain_passive(target_ip):
         "-d", target_ip
     ]
 
-    print("\n" + "="*53)
+    print("\n" + "="*(len("".join(command))+len(command)+18))
     print("     Running:", " ".join(command))
-    print("="*53)
+    print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
 
@@ -459,9 +474,9 @@ def web_pg_bf(target_ip, wordlist):
         "-t", "30"
     ]
 
-    print("\n" + "="*153)
+    print("\n" + "="*(len("".join(command))+len(command)+18))
     print("     Running:", " ".join(command))
-    print("="*153)
+    print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
 
@@ -478,13 +493,13 @@ def subdomain_bf(target_ip, wordlist):
         "gobuster",
         "dns",
         "-w", wordlist,
-        "-d", target_ip,
+        "--do", target_ip,
         "--no-error"
     ]
 
-    print("\n" + "="*153)
+    print("\n" + "="*(len("".join(command))+len(command)+18))
     print("     Running:", " ".join(command))
-    print("="*153)
+    print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
 
@@ -499,12 +514,12 @@ def network_scan(target_ip):
     
     while True:
         print ("\n What do you want to scan ? ")
-        print ("\n 1. Scan default /24 network ")
-        print ("\n 2. Scan /25 network ")
-        print ("\n 3. Scan /26 network ")
-        print ("\n 4. Scan /27 network ")
-        print ("\n 5. Enter custom subnet ")
-        print ("\n 0. Back to Main Menu ")
+        print ("\n [1] Scan default /24 network ")
+        print ("\n [2] Scan /25 network ")
+        print ("\n [3] Scan /26 network ")
+        print ("\n [4] Scan /27 network ")
+        print ("\n [5] Enter custom subnet ")
+        print ("\n [0] Back to Main Menu ")
         
         net_scan_choice = input("\n Your choice (0-5) : ")
         
@@ -557,9 +572,9 @@ def http_headers_scan(target_ip):
             
     command = ["curl", "-I", url]
     
-    print("\n" + "="*53)
+    print("\n" + "="*(len("".join(command))+len(command)+18))
     print(f"  Running: {CYAN}curl {GREEN}-I {RESET}{' '.join(command[2:])}")
-    print("="*53)
+    print("="*(len("".join(command))+len(command)+18))
 
     subprocess.run(command)
     
@@ -571,9 +586,9 @@ def exiftool_metadata_extract():
         
     command = ["exiftool", file_location]
 
-    print("\n" + "="*75)
+    print("\n" + "="*(len("".join(command))+len(command)+18))
     print("  Running:", " ".join(command))
-    print("="*75)
+    print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
 
@@ -585,9 +600,11 @@ def exiftool_metadata_extract():
 
 def main():
     
-    print("=" * 37)
-    print (f"     {BRIGHT_GREEN}Welcome to Recon Automator.{RESET}")
-    print("=" * 37)
+    show_banner()
+    
+    print("=" * 64)
+    print (f"                {BRIGHT_GREEN}Welcome to Recon automator tool.{RESET}")
+    print("=" * 64)
     
     target_ip = input("Enter target IP/Name/URL : ").strip()
     
