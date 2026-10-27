@@ -478,7 +478,7 @@ def subdomain_bf(target_ip, wordlist):
         "gobuster",
         "dns",
         "-w", wordlist,
-        "-d", target_ip
+        "-d", target_ip,
         "--no-error"
     ]
 
