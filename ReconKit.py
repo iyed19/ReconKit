@@ -38,6 +38,7 @@ def show_banner():
  ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝   ╚═╝   
 \033[0m"""
     print(banner)
+    #print("                          Eyad Mnassri")
     
     
     
@@ -437,9 +438,15 @@ def subdomain_passive(target_ip):
         "subfinder",
         "-d", target_ip
     ]
+    
+    colored_tool = f"{CYAN}nmap{RESET}"
+    colored_options = f"{GREEN}{-d}{RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_options + colored_ip
 
     print("\n" + "="*(len("".join(command))+len(command)+18))
-    print("     Running:", " ".join(command))
+    print("     Running:", " ".join(full_cmd_display))
     print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
@@ -492,13 +499,22 @@ def subdomain_bf(target_ip, wordlist):
     command = [
         "gobuster",
         "dns",
-        "-w", wordlist,
         "--do", target_ip,
+        "-w", wordlist,
         "--no-error"
     ]
+    
+    colored_tool = f"{CYAN}gobuster{RESET}"
+    colored_dns = "dns"
+    colored_opt1 = f"{GREEN}--do{RESET}"
+    colored_opt2 = f"{GREEN}-w{RESET}"
+    colored_opt3 = f"{GREEN}--no-error{RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_dns + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
 
     print("\n" + "="*(len("".join(command))+len(command)+18))
-    print("     Running:", " ".join(command))
+    print("     Running:", " ".join(full_cmd_display))
     print("="*(len("".join(command))+len(command)+18))
 
     result = subprocess.run(command,capture_output=True,text=True)
