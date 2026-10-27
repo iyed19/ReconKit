@@ -199,10 +199,14 @@ def dns_scan(target_ip):
         dns_choice = input("\n Your choice (0-2) : ")
         
         if dns_choice == "1" :
-            break
+            if (check_tool("subfinder") == True) :
+                subdomain_passive(target_ip)
+            else:
+                print("\n Please install [ subfinder ] to proceed in this function")
+                break
         elif dns_choice == "2" :
             if (check_tool("gobuster") == True) :
-                break
+                subdomain_bruteforce(target_ip)
             else:
                 print("\n Please install [ gobuster ] to proceed in this function")
                 break
@@ -376,6 +380,61 @@ def web_pages_bruteforce(target_ip):
             print ("\n Invalid choice!")
     
     
+
+def subdomain_bruteforce():
+    
+    SECLISTS = "/usr/share/seclists"
+    if not os.path.exists(SECLISTS):
+        print("\n")
+        print("=" * 32)
+        print("   SecLists is not installed.")
+        print("=" * 32)
+        return
+    
+    while True:
+        print ("\n What do you want to do ? ")
+        print ("\n 1. Run quick pages scan ")
+        print ("\n 2. Run balanced pages scan ")
+        print ("\n 3. Run deep pages scan ")
+        print ("\n 4. Run very deep pages scan (takes so much time!) ")
+        print ("\n 0. Back to Main Menu ")
+        
+        scan_choice = input("\n Your choice (0-4) : ")
+        
+        if scan_choice == "1":
+            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/services-names.txt")
+        elif scan_choice == "2":
+            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
+        elif scan_choice == "3":
+            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
+        elif scan_choice == "4":
+            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
+        elif scan_choice == "0" :
+            return
+        else :
+            print ("\n Invalid choice!")
+            
+            
+
+def subdomain_passive():
+    
+    command = [
+        "subfinder",
+        "-d", target_ip
+    ]
+
+    print("\n" + "="*53)
+    print("     Running:", " ".join(command))
+    print("="*53)
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+    
+    
     
 def web_pg_bf(target_ip, wordlist):
 
@@ -398,6 +457,29 @@ def web_pg_bf(target_ip, wordlist):
         "-w", wordlist,
         "-x", "html,js,php,txt,zip,aspx",
         "-t", "30"
+    ]
+
+    print("\n" + "="*153)
+    print("     Running:", " ".join(command))
+    print("="*153)
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+        
+        
+        
+def subdomain_bf(target_ip, wordlist):
+            
+    command = [
+        "gobuster",
+        "dns",
+        "-w", wordlist,
+        "-d", target_ip
+        "--no-error"
     ]
 
     print("\n" + "="*153)
@@ -512,14 +594,14 @@ def main():
     while True :
         print ("\n Current target : ", target_ip)
         print ("\n What do you want to do ? ")
-        print ("\n 1. Target & Host Discovery ")
-        print ("\n 2. Web Reconnaissance ")
-        print ("\n 3. DNS Reconnaissance ")
-        print ("\n 4. Enumerating common services ")
-        print ("\n 5. People OSINT ")
-        print ("\n 6. File & Metadata Reconnaissance ")
-        print ("\n 7. Change the target IP/Name/URL")
-        print ("\n 8. Quit ")
+        print ("\n [1] Target & Host Discovery ")
+        print ("\n [2] Web Reconnaissance ")
+        print ("\n [3] DNS Reconnaissance ")
+        print ("\n [4] Enumerating common services ")
+        print ("\n [5] People OSINT ")
+        print ("\n [6] File & Metadata Reconnaissance ")
+        print ("\n [7] Change the target IP/Name/URL")
+        print ("\n [8] Quit ")
         choice = input("\n Your choice (1-8) : ")
         
         if choice == "1" :
