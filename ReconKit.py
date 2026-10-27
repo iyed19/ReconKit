@@ -508,7 +508,7 @@ def subdomain_bf(target_ip, wordlist):
     colored_dns = "dns "
     colored_opt1 = f"{GREEN}--do {RESET}"
     colored_opt2 = f"{GREEN} -w {RESET}"
-    colored_opt3 = f"{GREEN}--no-error{RESET}"
+    colored_opt3 = f"{GREEN} --no-error{RESET}"
     colored_ip = f"{RESET}{target_ip}"
 
     full_cmd_display = colored_tool + colored_dns + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
@@ -638,17 +638,18 @@ def main():
         choice = input("\n Your choice (1-8) : ")
         
         if choice == "1" :
-            nmap_scan(target_ip)
+            nmap_scan(target_ip) #prsk kamla
         elif choice == "2" :
-            web_scan(target_ip)
+            web_scan(target_ip) #mzalt basic
         elif choice == "3" :
-            dns_scan(target_ip)
+            dns_scan(target_ip) #zid dnsenum tool
         elif choice == "4" :
-            common_services_scan(target_ip)
+            break
+            #common_services_scan(target_ip)
         elif choice == "5" :
             break
         elif choice == "6" :
-            file_scan()
+            file_scan() #faha kan metadata
         elif choice == "7" :
             target_ip = input("Enter new target IP/Name/URL: ").strip()
         elif choice == "8":
