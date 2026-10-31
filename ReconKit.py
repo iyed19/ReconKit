@@ -190,7 +190,7 @@ def web_scan(target_ip):
         print ("\n [5] All-in one web reconnaissance")
         print ("\n [0] Back to Main Menu ")
         
-        web_choice = input("\n Your choice (0-4) : ")
+        web_choice = input("\n Your choice (0-5) : ")
         
         if web_choice == "1" :
             if (check_tool("gobuster") == True) :
@@ -551,7 +551,7 @@ def web_complete_check(target_ip):
     
     colored_tool = f"{CYAN}finalrecon {RESET}"
     colored_options = f"{GREEN}--full --url {RESET}"
-    colored_ip = f"{RESET}{target_ip}"
+    colored_ip = f"{RESET}{url}"
 
     full_cmd_display = colored_tool + colored_options + colored_ip
 
