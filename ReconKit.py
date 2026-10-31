@@ -185,9 +185,12 @@ def web_scan(target_ip):
         print ("\n What do you want to do ? ")
         print ("\n [1] Web page and directory brute force ")
         print ("\n [2] HTTP/HTTPS Headers ")
+        print ("\n [3] Detect and identify WAFs")
+        print ("\n [4] Identify web technologies used")
+        print ("\n [5] All-in one web reconnaissance")
         print ("\n [0] Back to Main Menu ")
         
-        web_choice = input("\n Your choice (0-2) : ")
+        web_choice = input("\n Your choice (0-4) : ")
         
         if web_choice == "1" :
             if (check_tool("gobuster") == True) :
@@ -197,6 +200,24 @@ def web_scan(target_ip):
                 break
         elif web_choice == "2" :
             http_headers_scan(target_ip)
+        elif web_choice == "3" :
+            if (check_tool("wafw00f") == True) :
+                waf_check(target_ip)
+            else:
+                print("\n Please install [ wafw00f ] to proceed in this function")
+                break
+        elif web_choice == "4" :
+            if (check_tool("whatweb") == True) :
+                web_tech_check(target_ip)
+            else:
+                print("\n Please install [ whatweb ] to proceed in this function")
+                break
+        elif web_choice == "5" :
+            if (check_tool("finalrecon") == True) :
+                web_complete_check(target_ip)
+            else:
+                print("\n Please install [ finalrecon ] to proceed in this function")
+                break
         elif web_choice == "0" :
             return
         else :
@@ -455,6 +476,95 @@ def subdomain_passive(target_ip):
 
     if result.stderr:
         print(result.stderr)
+
+
+
+def waf_check(target_ip):
+    
+    command = [
+        "wafw00f",
+        target_ip
+    ]
+    
+    colored_tool = f"{CYAN}wafw00f {RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_ip
+
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+
+
+
+def web_tech_check(target_ip):
+    
+    command = [
+        "whatweb",
+        target_ip
+    ]
+    
+    colored_tool = f"{CYAN}whatweb {RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_ip
+
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+        
+        
+        
+def web_complete_check(target_ip):
+    
+    while True:
+        protocol = input("\n Protocol (http/https) : ").strip()
+        
+        if protocol == "http" :
+            url = f"http://{target_ip}"
+            break   
+        elif protocol == "https":
+            url = f"https://{target_ip}"
+            break
+        else:
+            print ("\n Invalid answer!")
+            
+    command = [
+        "finalrecon",
+        "--full",
+        "--url", url
+    ]
+    
+    colored_tool = f"{CYAN}finalrecon {RESET}"
+    colored_options = f"{GREEN}--full --url {RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_options + colored_ip
+
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
     
     
     
@@ -640,7 +750,7 @@ def main():
         if choice == "1" :
             nmap_scan(target_ip) #prsk kamla
         elif choice == "2" :
-            web_scan(target_ip) #mzalt basic
+            web_scan(target_ip) #prsk kamla
         elif choice == "3" :
             dns_scan(target_ip) #zid dnsenum tool
         elif choice == "4" :
