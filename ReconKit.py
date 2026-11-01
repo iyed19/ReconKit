@@ -235,7 +235,7 @@ def dns_scan(target_ip):
         print ("\n [4] Record enumeration")
         print ("\n [0] Back to Main Menu ")
         
-        dns_choice = input("\n Your choice (0-2) : ")
+        dns_choice = input("\n Your choice (0-4) : ")
         
         if dns_choice == "1" :
             if (check_tool("subfinder") == True) :
@@ -842,7 +842,7 @@ def main():
         elif choice == "2" :
             web_scan(target_ip) #prsk kamla
         elif choice == "3" :
-            dns_scan(target_ip) #zid dnsenum tool
+            dns_scan(target_ip) #prsk kamla
         elif choice == "4" :
             break
             #common_services_scan(target_ip)
