@@ -229,8 +229,10 @@ def dns_scan(target_ip):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n [1] Subdomain passive discovery - Subfinder ")
+        print ("\n [1] Subdomain passive discovery ")
         print ("\n [2] Subdomain brute force - Gobuster ")
+        print ("\n [3] Subdomain brute force - DNSEnum ")
+        print ("\n [4] Record enumeration")
         print ("\n [0] Back to Main Menu ")
         
         dns_choice = input("\n Your choice (0-2) : ")
@@ -243,9 +245,21 @@ def dns_scan(target_ip):
                 break
         elif dns_choice == "2" :
             if (check_tool("gobuster") == True) :
-                subdomain_bruteforce(target_ip)
+                subdomain_bruteforce(target_ip, dns_choice)
             else:
                 print("\n Please install [ gobuster ] to proceed in this function")
+                break
+        elif dns_choice == "3" :
+            if (check_tool("dnsenum") == True) :
+                subdomain_bruteforce(target_ip, dns_choice)
+            else:
+                print("\n Please install [ dnsenum ] to proceed in this function")
+                break
+        elif dns_choice == "4" :
+            if (check_tool("dnsrecon") == True) :
+                record_enum(target_ip)
+            else:
+                print("\n Please install [ dnsrecon ] to proceed in this function")
                 break
         elif dns_choice == "0" :
             return
@@ -418,7 +432,7 @@ def web_pages_bruteforce(target_ip):
     
     
 
-def subdomain_bruteforce(target_ip):
+def subdomain_bruteforce(target_ip, dns_choice):
     
     SECLISTS = "/usr/share/seclists"
     if not os.path.exists(SECLISTS):
@@ -438,18 +452,33 @@ def subdomain_bruteforce(target_ip):
         
         scan_choice = input("\n Your choice (0-4) : ")
         
-        if scan_choice == "1":
-            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/services-names.txt")
-        elif scan_choice == "2":
-            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
-        elif scan_choice == "3":
-            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
-        elif scan_choice == "4":
-            subdomain_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
-        elif scan_choice == "0" :
-            return
-        else :
-            print ("\n Invalid choice!")
+        if dns_choice == "2":
+            if scan_choice == "1":
+                subdomain_gobuster_bf(target_ip,"/usr/share/seclists/Discovery/DNS/services-names.txt")
+            elif scan_choice == "2":
+                subdomain_gobuster_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
+            elif scan_choice == "3":
+                subdomain_gobuster_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
+            elif scan_choice == "4":
+                subdomain_gobuster_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
+            elif scan_choice == "0" :
+                return
+            else :
+                print ("\n Invalid choice!")
+        elif dns_choice == "3":
+            if scan_choice == "1":
+                subdomain_dnsenum_bf(target_ip,"/usr/share/seclists/Discovery/DNS/services-names.txt")
+            elif scan_choice == "2":
+                subdomain_dnsenum_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-5000.txt")
+            elif scan_choice == "3":
+                subdomain_dnsenum_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-20000.txt")
+            elif scan_choice == "4":
+                subdomain_dnsenum_bf(target_ip,"/usr/share/seclists/Discovery/DNS/subdomains-top1million-110000.txt")
+            elif scan_choice == "0" :
+                return
+            else :
+                print ("\n Invalid choice!")
+        
             
             
 
@@ -465,6 +494,37 @@ def subdomain_passive(target_ip):
     colored_ip = f"{RESET}{target_ip}"
 
     full_cmd_display = colored_tool + colored_options + colored_ip
+
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+        
+        
+        
+def record_enum(target_ip):
+    
+    save_name = f"dns_records_{target_ip}"
+    
+    command = [
+        "dnsrecon",
+        "-d", target_ip,
+        "-c", save_name
+    ]
+    
+    colored_tool = f"{CYAN}dnsrecon {RESET}"
+    colored_option1 = f"{GREEN}-d {RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+    colored_option2 = f"{GREEN} -c {RESET}"
+    colored_file_name = f"{RESET}{save_name}"
+
+    full_cmd_display = colored_tool + colored_option1 + colored_ip + colored_option2 + colored_file_name
 
     print("\n" + "="*(len("".join(command))+len(command)+18))
     print(f"     Running: {full_cmd_display}")
@@ -604,7 +664,7 @@ def web_pg_bf(target_ip, wordlist):
         
         
         
-def subdomain_bf(target_ip, wordlist):
+def subdomain_gobuster_bf(target_ip, wordlist):
             
     command = [
         "gobuster",
@@ -622,6 +682,36 @@ def subdomain_bf(target_ip, wordlist):
     colored_ip = f"{RESET}{target_ip}"
 
     full_cmd_display = colored_tool + colored_dns + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
+
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.run(command,capture_output=True,text=True)
+
+    print(result.stdout)
+
+    if result.stderr:
+        print(result.stderr)
+        
+        
+        
+def subdomain_dnsenum_bf(target_ip, wordlist):
+            
+    command = [
+        "dnsenum",
+        "--enum", target_ip,
+        "-f", wordlist,
+        "-r"
+    ]
+    
+    colored_tool = f"{CYAN}dnsenum {RESET}"
+    colored_opt1 = f"{GREEN}--enum {RESET}"
+    colored_opt2 = f"{GREEN} -f {RESET}"
+    colored_opt3 = f"{GREEN} -r{RESET}"
+    colored_ip = f"{RESET}{target_ip}"
+
+    full_cmd_display = colored_tool + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
 
     print("\n" + "="*(len("".join(command))+len(command)+18))
     print(f"     Running: {full_cmd_display}")
