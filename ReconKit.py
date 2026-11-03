@@ -600,26 +600,17 @@ def web_pg_bf(target_ip, wordlist):
         "-t", "30"
     ]
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print("     Running:", " ".join(command))
-    print("="*(len("".join(command))+len(command)+18))
+    colored_tool = f"{CYAN}gobuster {RESET}"
+    colored_dir = "dir "
+    colored_opt1 = f"{GREEN}-u {RESET}{url}"
+    colored_opt2 = f"{GREEN} -w {RESET}"
+    colored_opt3 = f"{GREEN} -x {RESET}html,js,php,txt,zip,aspx "
+    colored_opt4 = f"{GREEN} -t {RESET}30 "
 
-    result = subprocess.Popen(
-        command, 
-        stdout=subprocess.PIPE, 
-        stderr=subprocess.STDOUT, 
-        text=True, 
-        bufsize=1
-    )
+    full_cmd_display = colored_tool + colored_dir + colored_opt1 + colored_opt2 + wordlist + colored_opt3 + colored_opt4 
 
-    try:
-        for line in result.stdout:
-            print(line, end="")
-        result.wait()
-    except KeyboardInterrupt:
-        print(f"\n [{YELLOW}!{RESET}] {YELLOW}Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
-        result.terminate()
-        result.wait()
+    run_tool(command, full_cmd_display)
+
         
         
         
@@ -729,11 +720,13 @@ def http_headers_scan(target_ip):
             
     command = ["curl", "-I", url]
     
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"  Running: {CYAN}curl {GREEN}-I {RESET}{' '.join(command[2:])}")
-    print("="*(len("".join(command))+len(command)+18))
+    colored_tool = f"{CYAN}curl {RESET}"
+    colored_opt1 = f"{GREEN}-I {RESET}"
+    colored_ip = f"{RESET}{target_ip}"
 
-    subprocess.run(command)
+    full_cmd_display = colored_tool + colored_opt1 + colored_ip
+
+    run_tool(command, full_cmd_display)
     
     
     
@@ -742,14 +735,10 @@ def exiftool_metadata_extract():
     file_location = input("\n Paste here the file full location (exp : /home/user01/img.jpg) : ")
         
     command = ["exiftool", file_location]
+    
+    colored_tool = f"{CYAN}exiftool {RESET}{file_location}"
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print("  Running:", " ".join(command))
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
+    run_tool(command, colored_tool)
     
     
     
