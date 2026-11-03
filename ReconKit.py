@@ -60,7 +60,7 @@ def is_root():
 
 def require_root(scan_name):
     if not is_root():
-        print(f"\n [{BRIGHT_RED}-{RESET}] {scan_name} requires root. Run ReconKit with sudo.")
+        print(f"\n [{BRIGHT_RED}-{RESET}] {scan_name} requires {BRIGHT_RED}root{RESET} privileges. Run ReconKit with {GREEN}sudo{RESET}.")
         return False
     return True
 
@@ -809,7 +809,7 @@ def main():
     
     print("=" * 64)
     print (f"                {BRIGHT_GREEN}Welcome to Recon automator tool.{RESET}")
-    #print ("Only use on systems you own or have written permission to test.")
+    print (" Only use on systems you own or have written permission to test")
     print("=" * 64)
     
     target_ip = input("Enter target IP/Name/URL : ").strip()
