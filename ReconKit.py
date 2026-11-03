@@ -612,14 +612,14 @@ def web_pg_bf(target_ip, wordlist):
         bufsize=1
     )
 
-    for line in result.stdout:
-        print(line, end="")
-
-    result.wait()
-    #print(result.stdout)
-
-    #if result.stderr:
-        #print(result.stderr)
+    try:
+        for line in result.stdout:
+            print(line, end="")
+        result.wait()
+    except KeyboardInterrupt:
+        print(f"\n{YELLOW}[!] Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
+        result.terminate()
+        result.wait()
         
         
         
@@ -772,7 +772,7 @@ def run_tool(command, full_cmd_display):
             print(line, end="")
         result.wait()
     except KeyboardInterrupt:
-        print(f"\n{YELLOW}[!] Scan aborted by user (Ctrl+C). Returning to menu...{RESET}")
+        print(f"\n{YELLOW}[!] Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
         result.terminate()
         result.wait()
     
