@@ -2,6 +2,7 @@ import os
 import subprocess
 import ipaddress
 import shutil
+import re
 
 
 
@@ -52,77 +53,26 @@ def check_tool(tool):
 
 
 
-def run_scan(options, target_ip):
-    
-    colored_nmap = f"{CYAN}nmap{RESET}"
-    colored_options = [f"{GREEN}{opt}{RESET}" for opt in options]
-    colored_ip = f"{RESET}{target_ip}"
+def is_root():
+    return hasattr(os, "geteuid") and os.geteuid() == 0
 
-    full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
-    command = ["nmap"] + options + output_args + [target_ip]
-    
-    output_args = save_result()
 
-    run_tool(command, full_cmd_display)
-    
-    
-    
-def run_network_scan(target_ip, subnet):
-        
-    output_args = save_result()
 
-    network = ipaddress.ip_network(f"{target_ip}/{subnet}", strict=False)
-    command = ["nmap", "-sn", str(network)]
-    
-    colored_nmap = f"{CYAN}nmap{RESET}"
-    colored_options = [f"{GREEN}-sn{RESET}"]
-    colored_ip = f"{RESET}{target_ip}"
+def require_root(scan_name):
+    if not is_root():
+        print(f"\n [{BRIGHT_RED}-{RESET}] {scan_name} requires root. Run ReconKit with sudo.")
+        return False
+    return True
 
-    full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
 
-    run_tool(command, full_cmd_display)
-    
-    
 
-def save_result():
-    
-    folder = "results"
-    os.makedirs(folder, exist_ok=True)
+def valid_target(target):
+    # Reject empty targets, whitespace, and anything nmap would read as an option
+    if not target or target.startswith("-") or re.search(r"\s", target):
+        print(f"\n [{BRIGHT_RED}-{RESET}] Invalid target")
+        return False
+    return True
 
-    while True:
-        save_q = input("\n Save results? (y/n): ").strip()
-        
-        if save_q.lower() == "y" :
-            
-            file_name = input("File name: ").strip()
-            if file_name == "":
-                print("Invalid file name")
-                continue
-            
-            while True:
-                print ("\n Format : ")
-                print ("\n [1] Normal (.nmap) ")
-                print ("\n [2] XML (.xml) ")
-                print ("\n [3] Grepable (.gnmap) ")
-                print ("\n [4] All (-oA) ")
-                
-                format_choice = input("\n Your choice (1-4) : ")
-                
-                if format_choice == "1" :
-                    return ["-oN", os.path.join(folder, file_name + ".nmap")]
-                elif format_choice == "2" :
-                    return ["-oX", os.path.join(folder, file_name + ".xml")]
-                elif format_choice == "3" :
-                    return ["-oG", os.path.join(folder, file_name + ".gnmap")]
-                elif format_choice == "4" :
-                    return ["-oA", os.path.join(folder, file_name)]
-                else :
-                    print ("\n Invalid choice!")
-                
-        elif save_q.lower() == "n":
-            return []
-        else:
-            print ("\n Invalid answer!")
     
     
 def nmap_scan(target_ip):
@@ -314,80 +264,146 @@ def file_scan():
             return
         else :
             print ("\n Invalid choice!")
-            
-def all_ports_scan(target_ip):
-    
-    print ("\n Executing all ports scan ...")
-    run_scan(["-p-", "-Pn"], target_ip)
-    
-    
-  
-def specific_port_scan(target_ip):
-    
-    port = input("\n Enter one port").strip()
-    
-    if not port.isdigit():
-        print("Invalid port")
+   
+   
+   
+def run_scan(options, target_ip):
+    if not valid_target(target_ip):
         return
+    output_args = save_result()
+    run_tool(["nmap"] + options + output_args + [target_ip])
+
+
+def run_network_scan(target_ip, subnet):
+    try:
+        network = ipaddress.ip_network(f"{target_ip}/{subnet}", strict=False)
+    except ValueError:
+        print("\n Network scans need an IP address (e.g. 192.168.1.10), not a domain name.")
+        return
+
+    if network.prefixlen < 16:
+        confirm = input(f"\n {network} is very large ({network.num_addresses} addresses). Continue? (y/n): ")
+        if confirm.strip().lower() != "y":
+            return
+
+    output_args = save_result()
+    run_tool(["nmap", "-sn"] + output_args + [str(network)])
+
+
+def save_result():
+
+    folder = "results"
+    os.makedirs(folder, exist_ok=True)
+
     while True:
-        if 1 <= port <= 65535 :
-            print ("\n Executing scan on port : ", port)
-            run_scan(["-p", port, "-Pn"], target_ip)
+        save_q = input("\n Save results? (y/n): ").strip()
+
+        if save_q.lower() == "y":
+
+            # basename() strips any path parts so the file stays inside results/
+            file_name = os.path.basename(input("File name: ").strip())
+            if file_name == "":
+                print("Invalid file name")
+                continue
+
+            while True:
+                print("\n Format : ")
+                print("\n [1] Normal (.nmap) ")
+                print("\n [2] XML (.xml) ")
+                print("\n [3] Grepable (.gnmap) ")
+                print("\n [4] All (-oA) ")
+
+                format_choice = input("\n Your choice (1-4) : ")
+
+                if format_choice == "1":
+                    return ["-oN", os.path.join(folder, file_name + ".nmap")]
+                elif format_choice == "2":
+                    return ["-oX", os.path.join(folder, file_name + ".xml")]
+                elif format_choice == "3":
+                    return ["-oG", os.path.join(folder, file_name + ".gnmap")]
+                elif format_choice == "4":
+                    return ["-oA", os.path.join(folder, file_name)]
+                else:
+                    print("\n Invalid choice!")
+
+        elif save_q.lower() == "n":
+            return []
         else:
-            print ("\n Enter a valid port ")
-    
+            print("\n Invalid answer!")
+
+
+def all_ports_scan(target_ip):
+    print("\n Executing all ports scan ...")
+    run_scan(["-p-", "-Pn"], target_ip)
+
+
+def specific_port_scan(target_ip):
+    while True:
+        port = input("\n Enter one port (0 to cancel) : ").strip()
+        if port == "0":
+            return
+        if port.isdigit() and 1 <= int(port) <= 65535:
+            run_scan(["-p", port, "-Pn"], target_ip)   # was: target (NameError)
+            return
+        print("\n Enter a valid port (1-65535)")
 
 
 def udp_scan(target_ip):
-    
-    print ("\n Executing UDP scan ...")
-    run_scan(["-sU", "-Pn"], target_ip)
-    
-    
+    print("\n Executing UDP scan ...")
+    if require_root("UDP scan"):
+        run_scan(["-sU", "-Pn"], target_ip)
+
 
 def os_scan(target_ip):
-    
-    print ("\n Executing OS detection scan ...")
-    run_scan(["-O", "-Pn"], target_ip)
-
+    print("\n Executing OS detection scan ...")
+    if require_root("OS detection"):
+        run_scan(["-O", "-Pn"], target_ip)
 
 
 def default_scripts_and_service_version_scan(target_ip):
-    
-    print ("\n Executing default nmap scripts and service version scan ...")
+    print("\n Executing default nmap scripts and service version scan ...")
     run_scan(["-sV", "-sC", "-Pn"], target_ip)
-    
 
 
 def default_and_vuln_scripts_and_version_scan(target_ip):
-    
-    print ("\n Executing default and vulnerability scripts and version scan ...")
+    print("\n Executing default and vulnerability scripts and version scan ...")
     run_scan(["-sV", "-sC", "--script", "vuln", "-Pn"], target_ip)
-    
-    
-    
+
+
 def specific_script(target_ip):
-    
     script = input("\n Enter your script name : ").strip()
-    
-    print ("Executing ", script," scan ...")
+
+    # Allow only normal script names/categories/wildcards, e.g. http-title, "default,safe", "smb-*"
+    if not re.fullmatch(r"[A-Za-z0-9_.,*\-]+", script) or script.startswith("-"):
+        print("\n Invalid script name")
+        return
+
+    print("\n Executing", script, "scan ...")
     run_scan(["--script", script, "-Pn"], target_ip)
-    
 
 
 def spoof_resource_ip(target_ip):
-    
     spoof_ip = input("\n Enter your spoof IP : ").strip()
-    
-    print ("Executing scan with IP = ", spoof_ip)
-    run_scan(["-S", spoof_ip, "-sV", "-sC", "-Pn"], target_ip)
-    
-    
-    
+    try:
+        ipaddress.ip_address(spoof_ip)
+    except ValueError:
+        print("\n Invalid IP address")
+        return
+
+    interface = input("\n Network interface (e.g. eth0) : ").strip()
+    if not re.fullmatch(r"[A-Za-z0-9_.\-]+", interface) or interface.startswith("-"):
+        print("\n Invalid interface")
+        return
+
+    print("\n Note: replies go to the spoofed IP, so you will likely not see results.")
+    if require_root("Spoofed scan"):
+        run_scan(["-S", spoof_ip, "-e", interface, "-sV", "-sC", "-Pn"], target_ip)
+
+
 def stealth_scan(target_ip):
-    
-    print ("\n Executing stealth scan ...")
-    run_scan(["-sS"], target_ip)
+    print("\n Executing SYN scan ...")
+    if require_root("SYN scan"):
+        run_scan(["-sS"], target_ip)
 
 
 
@@ -604,7 +620,7 @@ def web_pg_bf(target_ip, wordlist):
     colored_dir = "dir "
     colored_opt1 = f"{GREEN}-u {RESET}{url}"
     colored_opt2 = f"{GREEN} -w {RESET}"
-    colored_opt3 = f"{GREEN} -x {RESET}html,js,php,txt,zip,aspx "
+    colored_opt3 = f"{GREEN} -x {RESET}html,js,php,txt,zip,aspx"
     colored_opt4 = f"{GREEN} -t {RESET}30 "
 
     full_cmd_display = colored_tool + colored_dir + colored_opt1 + colored_opt2 + wordlist + colored_opt3 + colored_opt4 
@@ -741,29 +757,49 @@ def exiftool_metadata_extract():
     run_tool(command, colored_tool)
     
     
-    
-def run_tool(command, full_cmd_display):
-    
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
 
-    result = subprocess.Popen(
-        command, 
-        stdout=subprocess.PIPE, 
-        stderr=subprocess.STDOUT, 
-        text=True, 
-        bufsize=1
-    )
+def format_command(command):
+    tool, *args = command
+    parts = [f"{CYAN}{tool}{RESET}"]
+    for arg in args:
+        parts.append(f"{GREEN}{arg}{RESET}" if arg.startswith("-") else arg)
+    return " ".join(parts)
+
+
+def run_tool(command, full_cmd_display=None):
+    # Build the display automatically if the caller didn't give a string
+    if not isinstance(full_cmd_display, str):
+        full_cmd_display = format_command(command)
+
+    line = " ".join(command)
+    print("\n" + "=" * (len(line) + 18))
+    print(f"     Running: {full_cmd_display}")
+    print("=" * (len(line) + 18))
 
     try:
-        for line in result.stdout:
-            print(line, end="")
-        result.wait()
+        proc = subprocess.Popen(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
+        
+    except FileNotFoundError:
+        print(f"\n [{BRIGHT_RED}-{RESET}] {command[0]} {BRIGHT_RED}is not installed.{RESET}")
+        print(f"\n Please install [ {command[0]} ] to proceed in this function")
+        return
+
+    try:
+        for out in proc.stdout:
+            print(out, end="")
+        proc.wait()
+        
     except KeyboardInterrupt:
+        proc.terminate()
+        proc.wait()
         print(f"\n [{YELLOW}!{RESET}] {YELLOW}Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
-        result.terminate()
-        result.wait()
+        
     
 
 
