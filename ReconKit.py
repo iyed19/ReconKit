@@ -767,10 +767,14 @@ def run_tool(command, full_cmd_display):
         bufsize=1
     )
 
-    for line in result.stdout:
-        print(line, end="")
-
-    result.wait()
+    try:
+        for line in result.stdout:
+            print(line, end="")
+        result.wait()
+    except KeyboardInterrupt:
+        print(f"\n{YELLOW}[!] Scan aborted by user (Ctrl+C). Returning to menu...{RESET}")
+        result.terminate()
+        result.wait()
     
 
 
