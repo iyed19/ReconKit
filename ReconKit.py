@@ -617,7 +617,7 @@ def web_pg_bf(target_ip, wordlist):
             print(line, end="")
         result.wait()
     except KeyboardInterrupt:
-        print(f"\n{YELLOW}[!] Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
+        print(f"\n [{YELLOW}!{RESET}] {YELLOW}Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
         result.terminate()
         result.wait()
         
@@ -772,7 +772,7 @@ def run_tool(command, full_cmd_display):
             print(line, end="")
         result.wait()
     except KeyboardInterrupt:
-        print(f"\n{YELLOW}[!] Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
+        print(f"\n [{YELLOW}!{RESET}] {YELLOW}Operation aborted by user (Ctrl+C). Returning to menu...{RESET}")
         result.terminate()
         result.wait()
     
