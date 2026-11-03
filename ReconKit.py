@@ -59,16 +59,11 @@ def run_scan(options, target_ip):
     colored_ip = f"{RESET}{target_ip}"
 
     full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
-
-    print("\n" + "=" * 60)
-    print("          Running:", " ".join(full_cmd_display))
-    print("=" * 60)
+    command = ["nmap"] + options + output_args + [target_ip]
     
     output_args = save_result()
 
-    command = ["nmap"] + options + output_args + [target_ip]
-
-    subprocess.run(command)
+    run_tool(command, full_cmd_display)
     
     
     
@@ -85,11 +80,7 @@ def run_network_scan(target_ip, subnet):
 
     full_cmd_display = [colored_nmap] + colored_options + [colored_ip]
 
-    print("\n" + "=" * 60)
-    print("          Running:", " ".join(full_cmd_display))
-    print("=" * 60)
-
-    subprocess.run(command)
+    run_tool(command, full_cmd_display)
     
     
 
@@ -273,10 +264,10 @@ def common_services_scan(target_ip):
     while True:
         print ("\n What do you want to do ? ")
         print ("\n 1. SMB ")
-        print ("\n 2. RDP ")
-        print ("\n 3. SQL Databases ")
-        print ("\n 4. SMTP/IMAP/POP3 ")
-        print ("\n 5. FTP ")
+        print ("\n 2. SQL Databases ")
+        print ("\n 3. SMTP/IMAP/POP3 ")
+        print ("\n 4. FTP ")
+        print ("\n 5. RDP ")
         print ("\n 0. Back to Main Menu ")
         
         srvc_choice = input("\n Your choice (0-5) : ")
@@ -338,9 +329,12 @@ def specific_port_scan(target_ip):
     if not port.isdigit():
         print("Invalid port")
         return
-
-    print ("\n Executing scan on port : ", port)
-    run_scan(["-p", port, "-Pn"], target_ip)
+    while True:
+        if 1 <= port <= 65535 :
+            print ("\n Executing scan on port : ", port)
+            run_scan(["-p", port, "-Pn"], target_ip)
+        else:
+            print ("\n Enter a valid port ")
     
 
 
@@ -444,10 +438,10 @@ def subdomain_bruteforce(target_ip, dns_choice):
     
     while True:
         print ("\n What do you want to do ? ")
-        print ("\n [1] Run quick pages scan ")
-        print ("\n [2] Run balanced pages scan ")
-        print ("\n [3] Run deep pages scan ")
-        print ("\n [4] Run very deep pages scan (takes so much time!) ")
+        print ("\n [1] Run quick subdomains scan ")
+        print ("\n [2] Run balanced subdomains scan ")
+        print ("\n [3] Run deep subdomains scan ")
+        print ("\n [4] Run very deep subdomains scan (takes so much time!) ")
         print ("\n [0] Back to Main Menu ")
         
         scan_choice = input("\n Your choice (0-4) : ")
@@ -495,16 +489,7 @@ def subdomain_passive(target_ip):
 
     full_cmd_display = colored_tool + colored_options + colored_ip
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
         
         
         
@@ -526,16 +511,7 @@ def record_enum(target_ip):
 
     full_cmd_display = colored_tool + colored_option1 + colored_ip + colored_option2 + colored_file_name
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
 
 
 
@@ -551,16 +527,7 @@ def waf_check(target_ip):
 
     full_cmd_display = colored_tool + colored_ip
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
 
 
 
@@ -576,16 +543,7 @@ def web_tech_check(target_ip):
 
     full_cmd_display = colored_tool + colored_ip
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
         
         
         
@@ -615,16 +573,7 @@ def web_complete_check(target_ip):
 
     full_cmd_display = colored_tool + colored_options + colored_ip
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
     
     
     
@@ -655,12 +604,22 @@ def web_pg_bf(target_ip, wordlist):
     print("     Running:", " ".join(command))
     print("="*(len("".join(command))+len(command)+18))
 
-    result = subprocess.run(command,capture_output=True,text=True)
+    result = subprocess.Popen(
+        command, 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.STDOUT, 
+        text=True, 
+        bufsize=1
+    )
 
-    print(result.stdout)
+    for line in result.stdout:
+        print(line, end="")
 
-    if result.stderr:
-        print(result.stderr)
+    result.wait()
+    #print(result.stdout)
+
+    #if result.stderr:
+        #print(result.stderr)
         
         
         
@@ -683,16 +642,7 @@ def subdomain_gobuster_bf(target_ip, wordlist):
 
     full_cmd_display = colored_tool + colored_dns + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
         
         
         
@@ -713,16 +663,7 @@ def subdomain_dnsenum_bf(target_ip, wordlist):
 
     full_cmd_display = colored_tool + colored_opt1 + colored_ip + colored_opt2 + wordlist + colored_opt3
 
-    print("\n" + "="*(len("".join(command))+len(command)+18))
-    print(f"     Running: {full_cmd_display}")
-    print("="*(len("".join(command))+len(command)+18))
-
-    result = subprocess.run(command,capture_output=True,text=True)
-
-    print(result.stdout)
-
-    if result.stderr:
-        print(result.stderr)
+    run_tool(command, full_cmd_display)
         
         
         
@@ -810,7 +751,26 @@ def exiftool_metadata_extract():
 
     print(result.stdout)
     
-            
+    
+    
+def run_tool(command, full_cmd_display):
+    
+    print("\n" + "="*(len("".join(command))+len(command)+18))
+    print(f"     Running: {full_cmd_display}")
+    print("="*(len("".join(command))+len(command)+18))
+
+    result = subprocess.Popen(
+        command, 
+        stdout=subprocess.PIPE, 
+        stderr=subprocess.STDOUT, 
+        text=True, 
+        bufsize=1
+    )
+
+    for line in result.stdout:
+        print(line, end="")
+
+    result.wait()
     
 
 
@@ -820,6 +780,7 @@ def main():
     
     print("=" * 64)
     print (f"                {BRIGHT_GREEN}Welcome to Recon automator tool.{RESET}")
+    #print ("Only use on systems you own or have written permission to test.")
     print("=" * 64)
     
     target_ip = input("Enter target IP/Name/URL : ").strip()
@@ -844,10 +805,10 @@ def main():
         elif choice == "3" :
             dns_scan(target_ip) #prsk kamla
         elif choice == "4" :
-            break
             #common_services_scan(target_ip)
+            print ("\n Not implemented yet")
         elif choice == "5" :
-            break
+            print ("\n Not implemented yet")
         elif choice == "6" :
             file_scan() #faha kan metadata
         elif choice == "7" :
